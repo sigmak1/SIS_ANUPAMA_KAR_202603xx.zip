@@ -1,23 +1,59 @@
+
 # SIS_ANUPAMA_KAR_202603xx.zip 
 Usage of AI: Used AI to understand and learn how to set everything up on GitHub, to help in markdown MathJax formatting for equations, and to learn how to create .gif from MATLAB, to polish my base code, to define some of the functions, and to add some fancy items like indicator plots. Also used it to research and read about different integrators to enhance my 
 knowledge base.  
 
-# Table of Contents
-- [1. Singularity for asymmetric Euler angle sets](#1-singularity-for-asymmetric-euler-angle-sets-page-117)
-- [2. Ambiguity of Euler parameters (quaternions)](#2-ambiguity-of-euler-parameters-quaternion-page-127)
-- [3. Classical Rodrigues Parameters (CRP)](#3-classical-rodrigues-parameters-page-135)
-- [4. Comparison of different numerical integrators](#4-comparison-of-different-numerical-integrators)
-- [5. 3D animation explanation](#5-3d-animation-explanation)
-- [References](#references)
 
 
-## 1.	Singularity for asymmetric Euler angle sets
-### 1.1. Background and set-up of the EOM  
+## Table of Contents
+1. [How-To-Guide](#1-how-to-guide)
+2. [Singularity for asymmetric Euler angle sets](#2-singularity-for-asymmetric-euler-angle-sets)
+   - [2.1. Background and set-up of the EOM](#21-background-and-set-up-of-the-eom)
+   - [2.2. Results](#22-results)
+   - [2.3. Analysis](#23-analysis)
+3. [Ambiguity of Euler parameters (quaternions)](#3-ambiguity-of-euler-parameters-quaternions)
+   - [3.1. Background and set-up of the EOM](#31-background-and-set-up-of-the-eom)
+   - [3.2. Results](#32-results)
+   - [3.3. Analysis](#33-analysis)
+
+4. [Classical Rodrigues Parameters (CRP)](#4-classical-rodrigues-parameters-crp)
+   - [4.1. Background and set-up of the EOM](#41-background-and-set-up-of-the-eom)
+   - [4.2. Results](#42-results)
+   - [4.3. Analysis](#43-analysis)
+5. [Comparison of different numerical integrators](#5-comparison-of-different-numerical-integrators)
+   - [5.1. Overview of ODE Solvers Used](#51-overview-of-ode-solvers-used)
+   - [5.2. Result](#52-result)
+   - [5.3. Analysis](#53-analysis)
+6. [3D animation explanation](#6-3d-animation-explanation)
+7. [References](#7-references)
+
+## List of Figures
+Figure 2.1: Successive yaw, pitch, and roll rotations  
+Figure 2.1: 3-2-1 Euler Angles vs Time (ode45)
+Figure 3.1: Quaternion Components  
+Figure 3.2: Quaternion Ambiguity Detection  
+Figure 3.3: Quaternion Norm  
+Figure 4.1: CRP Norm and Principal Rotation Angle  
+Figure 5.1: Integrator Step Size vs Time vs Pitch  
+Figure 5.2: Singularity syntax error encountered during simulation  
+Figure 6.3: 3D Animation Frame
+
+## List of Abbreviations
+EOM: Equation of Motion  
+DCM: Direction Cosine Matrix  
+CRP: Classical Rodrigues Parameters  
+ODE: Ordinary Differential Equation  
+MATLAB: Matrix Laboratory (software)  
+GIF: Graphics Interchange Format
+
+## 1. How-To-Guide
+## 2.	Singularity for asymmetric Euler angle sets
+### 2.1. Background and set-up of the EOM  
 Euler angles describe the orientation of a rigid body with respect to a fixed coordinate system using three successive rotations. Let $(\phi, \theta, \psi)$ be the three Euler angles (often called roll, pitch, and yaw).
 
-![Figure 1.1: Successive yaw, pitch, and roll rotations](Successive%20yaw,%20pitch,%20and%20rotations.png)
+![Figure 2.1: Successive yaw, pitch, and roll rotations](Successive%20yaw,%20pitch,%20and%20rotations.png)
 
-**Figure 1.1:** Successive yaw, pitch, and roll rotations. This figure illustrates the sequence of rotations about the principal axes, corresponding to the Euler angles $(\psi, \theta, \phi)$.
+**Figure 2.1:** Successive yaw, pitch, and roll rotations. This figure illustrates the sequence of rotations about the principal axes, corresponding to the Euler angles $(\psi, \theta, \phi)$.
 
 The transformation from the body frame to the inertial frame can be represented by the rotation matrix $R$:
 
@@ -80,7 +116,8 @@ Assign the Euler angle rates as:
 
 $$
 \dot{y} = \begin{bmatrix} \dot{\psi} \\ \dot{\theta} \\ \dot{\phi} \end{bmatrix}
-$$
+$$  
+
 **Equation (3.57)** [2] shows the Euler Angles kinematic equation of motion as reproduced below:
 <div style="border:2px solid black; padding:10px; display:inline-block;">
 The Euler Angles kinematic equation of motion is:
@@ -131,18 +168,20 @@ Looking at the inverse B matrix, the **singularity occurs when $\cos \theta = 0$
 
 Physically, this corresponds to **gimbal lock**, where the Euler angles lose one degree of freedom: the rotation axes align such that you cannot uniquely determine all three angular rates from the Euler angle rates. Near $\theta = 90^\circ$, small changes in angular velocity cause large changes in the Euler rates, making control or simulation unstable.
 
-### 1.2. How-To
+### 2.2. Results
 
-### 1.3. Results
+![Figure 2.1: 3-2-1 Euler Angles vs Time (ode45)](3-2-1%20Euler%20Angles%20ve%20Time%20(ode45).png)
 
-![Figure 1.2: 3-2-1 Euler Angles vs Time (ode45)](3-2-1%20Euler%20Angles%20ve%20Time%20(ode45).png)
+**Figure 2.1:** 3-2-1 Euler Angles vs Time (ode45). This figure shows the time evolution of the Euler angles using the ode45 integrator.
 
-**Figure 1.2:** 3-2-1 Euler Angles vs Time (ode45). This figure shows the time evolution of the Euler angles using the ode45 integrator.
+### 2.3. Analysis  
 
+The pitch angle θ steadily increases and approaches 90° as designed in the angular velocity profile (**Figure 2.1**). Near t ≈ 25–30 s, θ gets very close to 90°, signaling the approach to the Euler singularity. At this point, the other two angles, yaw ψ and roll φ, begin to show rapid, erratic changes or large jumps. When θ → 90°, the rotation matrix becomes nearly singular, and ψ and φ are no longer uniquely defined. In the plot, this appears as step-ups or step-downs in yaw and roll — sudden changes in their values while the physical motion remains smooth. This is a classic visual cue for Euler angle singularities: the angles “jump” because the coordinate mapping cannot represent rotations uniquely near θ = ±90°.
 
-### 1.4. Analysis
-## 2.	Ambiguity of Euler parameters (quaternions)  
-### 2.1. Background and set-up of the EOM 
+Singularities can be spotted in the plot by observing when the pitch angle θ approaches ±90° (dashed reference lines are included in the plot) and by noting where ψ or φ suddenly increase or decrease sharply. Often, adaptive integrators like `ode45` or `ode15s` reduce their step size near the singularity, which can also appear as denser points along the curve. Fixed-step integrators such as `ode4` do not adapt and may produce larger numerical errors in yaw and roll near the singularity.
+
+## 3.	Ambiguity of Euler parameters (quaternions)  
+### 3.1. Background and set-up of the EOM 
 To curb the singularity issue in Euler angles, four Euler parameters are used, mainly $\beta_0$, $\beta_1$, $\beta_2$, and $\beta_3$ (or $q_0$, $q_1$, $q_2$, and $q_3$).
 
 <div style="border:2px solid black; padding:10px; display:inline-block;">
@@ -199,7 +238,8 @@ q_1 \\
 q_2 \\
 q_3
 \end{bmatrix}
-$$
+$$  
+
 This is defined as a function on the *main.m* file as 
 
 ````matlab
@@ -218,23 +258,39 @@ end
 ````
 Quaternions have a **sign ambiguity** because a quaternion and its negative represent the same physical rotation. That is, $\mathbf{q} = [q_0, q_1, q_2, q_3]^T$ and $-\mathbf{q} = [-q_0, -q_1, -q_2, -q_3]^T$ produce identical rotations in 3D space. This can cause apparent “jumps” in quaternion values when integrating or interpolating rotations if the sign flips, even though the actual orientation does not change. Care must be taken in numerical algorithms to maintain sign consistency to avoid discontinuities.
 
-### 2.2. How-To  
+### 3.2. Results  
 
-![Figure 2.1: Quaternion Components](Quaternion%20Components.png)
+![Figure 3.1: Quaternion Components](Quaternion%20Components.png)
 
-**Figure 2.1:** Quaternion components. This figure shows the individual components of the quaternion over time.
+**Figure 3.1:** Quaternion components. This figure shows the individual components of the quaternion over time.
 
-![Figure 2.2: Quaternion Ambiguity Detection](Quaternion%20Ambiguity%20Detection.png)
+![Figure 3.2: Quaternion Ambiguity Detection](Quaternion%20Ambiguity%20Detection.png)
 
-**Figure 2.2:** Quaternion ambiguity detection. This figure illustrates the detection of ambiguity in quaternion representation.
+**Figure 3.2:** Quaternion ambiguity detection. This figure illustrates the detection of ambiguity in quaternion representation.
 
-![Figure 2.3: Quaternion Norm](Quaternion%20Norm.png)
+![Figure 3.3: Quaternion Norm](Quaternion%20Norm.png)
 
-**Figure 2.3:** Quaternion norm. This figure shows the norm of the quaternion, which should remain close to 1 for a valid rotation.
-### 2.3. Results   
-### 2.4. Analysis  
-## 3.	Classical Rodrigues Parameters (CRP)  
-### 3.1. Background and set-up of the EOM  
+**Figure 3.3:** Quaternion norm. This figure shows the norm of the quaternion, which should remain close to 1 for a valid rotation.
+
+### 3.3. Analysis  
+
+The quaternion-based integration produces several key plots: the individual components b₀, b₁, b₂, b₃, the quaternion norm ‖q‖, and the dot product between consecutive quaternions to detect ambiguity.
+
+1. **Quaternion Components vs Time:**  
+   The plots of b₀, b₁, b₂, b₃ show smooth evolution even as the spacecraft approaches large rotations or Euler singularities. Occasionally, one component may appear to "flip" sign. This happens because of the **quaternion double-cover property**: q and -q represent the same physical rotation.  
+
+   Visually, a flip is seen when a decreasing curve becomes increasing abruptly.   
+
+   The first noticeable flip occurs around **t ≈ 12.6 s** in **Figure 3.1**. Importantly, these flips are **coordinate artifacts**, not physical discontinuities.
+
+2. **Quaternion Norm:**  
+   The plot of ‖q‖ = √(b₀² + b₁² + b₂² + b₃²) remains extremely close to 1 throughout the simulation (**Figure 3.3**). This confirms that the quaternions are properly normalized and immune to the singularities that affect Euler angles or CRP. Normalization is explicitly enforced in the code via the `normalizeQuat` function. This is a good indicator plot to proof read all math, calculation and computation.
+
+3. **Quaternion Ambiguity Detection:**  
+   The dot product qₖ · qₖ₋₁ between consecutive quaternion states highlights sign flips: values near -1 indicate a flip (**Figure 3.2**). These flips coincide with the visual jumps in the component plots but do **not** indicate any physical discontinuity. The aircraft attitude remains smooth and continuous.
+
+## 4.	Classical Rodrigues Parameters (CRP)  
+### 4.1. Background and set-up of the EOM  
 <div style="border:2px solid black; padding:10px; display:inline-block;">
 The standard CRP kinematic equation is:
 
@@ -290,29 +346,69 @@ $$
 
 The mapping from a rotation to CRP is **unique**, except at $\theta = 180^\circ$.
 
-While this solves the ambiguity issue, it reintroduces the singularity issue at $\theta = 180^\circ$.
+While this solves the ambiguity issue, it reintroduces the singularity issue at $\theta = 180^\circ$.  
 
-### 3.2. How-To  
-### 3.3. Results  
-### 3.4. Analysis  
-## 4.	Comparison of different numerical integrators    
-Singularity was hit. So, a tolerance was added for ode45 and ode15s.
+### 4.2. Results  
 
-![Figure 1.4: Integrator Step Size vs Time vs Pitch](Integrator%20Step%20Size%20vs%20Time%20vs%20Pitch.png)
+![Figure 4.2: CRP Norm and Principal Rotation Angle](CRP%20Norm%20and%20Principal%20Rotation%20Angle.png)
 
-**Figure 1.4:** Integrator step size vs time vs pitch. This figure illustrates how the integrator step size varies with time and pitch angle during the simulation.
+**Figure 4.1:** CRP Norm and Principal Rotation Angle. This figure shows the relationship between the CRP norm and the principal rotation angle, highlighting the singularity as the angle approaches $180^\circ$.
 
-## 5. 3D animation explanation  
+### 4.3. Analysis  
+The combined plot of the CRP norm and principal rotation angle as shown in **Figure 4.1** shows that the classical Rodrigues parameters become unbounded as the principal rotation angle approaches $180^\circ$. While the quaternion-based principal angle evolves smoothly through $180^\circ$, the CRP norm spikes because
+
+$$
+|\mathbf{r}| = \tan\left(\frac{\Phi}{2}\right),
+$$
+
+which tends to infinity as $\Phi \to 180^\circ$. This demonstrates that the CRP singularity depends on the total rotation angle $\Phi$ rather than any individual Euler angle component.
+
+As the rotation approaches $180^\circ$, the CRP state grows extremely large, causing the numerical integrator step size to shrink and eventually fail because the state becomes unbounded. Consequently, no meaningful CRP solution is produced beyond this point. The spacecraft attitude itself remains continuous and well-defined, but the CRP parameterization becomes invalid, confirming that this behavior is a geometric singularity of the representation rather than a physical discontinuity in the motion.
+
+## 5.	Comparison of different numerical integrators    
+### 5.1. Overview of ODE Solvers Used
+
+In this project, three different numerical integration methods are employed to solve the attitude kinematics: `ode45`, `ode15s`, and `ode4`. The built-in MATLAB solvers such as `ode45` and `ode15s` are adaptive, variable-step methods that adjust step size based on the local behavior of the solution to satisfy specified error tolerances.  
+
+ `ode45` implements a medium-order explicit Runge–Kutta (Dormand–Prince) algorithm and is generally effective for most nonstiff ordinary differential equations, making it a good first choice for typical dynamics problems.  
+ 
+  `ode15s` is a variable-step, variable-order solver based on numerical differentiation formulas, designed to handle stiff systems or problems that are inefficient or difficult for `ode45` to integrate.  
+  
+   In contrast, `ode4` is a simple fixed-step fourth-order Runge–Kutta integrator with a user-specified step size; it does not automatically adapt to rapid changes in the solution because it lacks error control. These differences in algorithm and adaptivity influence how each solver behaves as the attitude kinematics approach singular configurations. [3]
+
+### 5.2. Result
+![Figure 5.1: Integrator Step Size vs Time vs Pitch](Integrator%20Step%20Size%20vs%20Time%20vs%20Pitch.png)
+
+**Figure 5.1:** Integrator step size vs time vs pitch. This figure illustrates how the integrator step size varies with time and pitch angle during the simulation.  
+
+![Singularity syntax error](Singularity%20syntax%20error.png)
+
+**Figure 5.2:** Singularity syntax error encountered during simulation. This illustrates the numerical breakdown as the CRP singularity is reached.  
+
+### 5.3. Analysis
+
+The step-size plot (**Figure 5.1**) shows distinct behavior for `ode45`, `ode15s`, and the fixed-step `ode4` method as the Euler singularity (θ → ±90°) or the CRP singularity (Φ → 180°) is approached.
+
+As the singularity is approached, the kinematic equations become ill-conditioned and the derivatives grow rapidly. For `ode45` (an explicit adaptive Runge–Kutta 4/5 method), the solver automatically reduces its step size to maintain the specified error tolerances. This appears in the plot as a sharp decrease in step size near the singularity. Although `ode45` can approach the singularity smoothly, its step size may become extremely small, increasing computational cost and potentially causing termination if the required step becomes too small.
+
+`ode15s` (a variable-order stiff solver based on numerical differentiation formulas) is designed for stiff systems. Near the singularity, the rapid growth in derivatives introduces stiffness-like behavior. As a result, `ode15s` typically maintains stability better than `ode45` and may require fewer total steps, but it can still struggle when the state itself becomes unbounded (as in CRP at Φ = 180°). Since the singularity is geometric rather than purely stiffness-driven, `ode15s` does not eliminate the blow-up; it only handles the rapid dynamics more robustly.
+
+In contrast, `ode4` uses a fixed step size and does not adapt to the rapidly increasing derivatives. As the singularity is approached, its fixed step may be too large to accurately resolve the steep gradients, leading to large numerical errors or instability. The step-size plot for `ode4` remains constant, but the solution accuracy degrades significantly near the singularity.
+
+Overall, `ode45` provides the best balance of accuracy and efficiency for non-stiff attitude kinematics, as it adapts its step size appropriately. `ode15s` may offer improved stability in rapidly changing regions but does not resolve the fundamental singularity. The fixed-step `ode4` method is the least reliable near singularities because it cannot adjust its step size to maintain accuracy.
+
+The solver failure warning from `ode45` at **t ≈ 12.6 s** as shown in **Figure 5.2** coincides with the principal rotation angle approaching 180° (**Figure 4.1**). As the CRP norm diverges, the state derivatives grow without bound, forcing the adaptive solver to reduce its step size below machine precision. This numerical breakdown confirms that the observed behavior is due to the geometric singularity of the CRP parameterization rather than a physical instability in the spacecraft motion. This warning is strong evidence that the CRP singularity has been reached.
+
+## 6. 3D animation explanation  
 Once MATLAB runs successfully, it will generate a .gif file and save it in the designated folder as *Aircraft_Attitude.gif*. The legends of the .gif are same as the legends of the Euler Angles plot (figure 1.2.). Since the .gif updates itiratively, putting a legend that would stay fixed was rendering bad graphics.  
 
-![Figure 1.3: 3D Animation Frame](3D%20animation%20frame.png)
+![Figure 6.3: 3D Animation Frame](3D%20animation%20frame.png)
 
-**Figure 1.3:** 3D animation frame. This figure shows a sample frame from the MATLAB-generated aircraft attitude animation.
-
+**Figure 6.3:** 3D animation frame. This figure shows a sample frame from the MATLAB-generated aircraft attitude animation.
 
 
 It is to be noted that the animation is a rendering of the computation and in no way represents the actual physical motion of an aircraft. So, singularity in Euler angles or CRPs results in tumbling or rapid spinning. Quarternion ambiguity does not show any symptoms. Only singularity affects the actual computer attitude. 
-## References
+## 7. References
 [1] Ross Dynamics Lab, “Euler Angle Simulation with MATLAB – Integrating the Rotational Kinematic Differential Equations,” YouTube video, 30 Jul. 2021. https://www.youtube.com/watch?v=vwn_JT0SDXQ. 
 
 [2] Schaub, H., and Junkins, J. L., Analytical Mechanics of Space Systems, 2nd ed., American Institute of Aeronautics and Astronautics, Reston, VA, 2009.  

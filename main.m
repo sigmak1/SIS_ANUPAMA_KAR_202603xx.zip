@@ -1,8 +1,8 @@
 clear; clc; close all;
 
 %% ==========================================================
-%  AE 544 Project PP01
-%  Anupama Kar 
+%  AE 544 Programming Project 1
+%  Anupama Kar
 %  Singularity & Ambiguity Study
 %  3-2-1 Euler, Quaternion, CRP
 %  Integrator Comparison: ode45, ode15s, ode4
@@ -135,17 +135,26 @@ grid on
 
 %% Rodrigues Blow-Up (Direct Integration)
 figure
-plot(t45_r,vecnorm(y45_r,2,2),'LineWidth',2)
-xlabel('Time (s)')
-ylabel('||r||')
-title('Classical Rodrigues Blow-Up Near 180° (Direct Integration)')
-grid on
 
-% Right axis: pitch θ
+% ----- LEFT AXIS: CRP Norm -----
+yyaxis left
+plot(t45_r, vecnorm(y45_r,2,2), 'b', 'LineWidth',2)
+ylabel('||r||')
+ylim([0 max(vecnorm(y45_r,2,2))*1.1])
+
+% ----- RIGHT AXIS: Principal Angle -----
+Phi = 2*acos(y45_q(:,1));
+Phi_deg = Phi*180/pi;
+
 yyaxis right
-plot(t45_e, y45_e(:,2)*180/pi,'k','LineWidth',1.2)
-yline(90,'k--'); yline(-90,'k--')
-ylabel('\theta (deg)')
+plot(t45_q, Phi_deg, 'r--', 'LineWidth',2)
+ylabel('Principal Angle \Phi (deg)')
+yline(180,'k--','LineWidth',1.5)
+
+xlabel('Time (s)')
+title('CRP Norm and Principal Rotation Angle')
+grid on
+legend('||r||','\Phi (deg)','180°','Location','best')
 %% ==========================================================
 %  ================= FUNCTIONS ===============================
 % ===========================================================
@@ -249,7 +258,7 @@ xlabel('X'); ylabel('Y'); zlabel('Z')
 hold on
 
 % Optional GIF filename
-filename = 'Spacecraft_Attitude.gif';
+filename = 'Aircraft_Attitude.gif';
 
 for k = 1:length(t45_e)
    
