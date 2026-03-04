@@ -20,8 +20,8 @@ w_fun = @(t) [0.2*sin(0.02*t);
               0.2*cos(0.02*t)];
 
 % Initial Conditions
-Euler0 = [0; 80*pi/180; 0];    % near singularity
-q0     = [1; 0; 0; 0];         % identity quaternion
+Euler0 = [60; 0; 90]*pi/180;    % near singularity
+q0     = [0; 10; 0; 1];         % identity quaternion
 
 %% ---------------- Integrator Options ----------------
 
@@ -120,18 +120,6 @@ ylabel('||q||')
 title('Quaternion Norm (Should Remain 1)')
 grid on
 ylim([0.5 1.5])
-%% Quaternion Ambiguity Detection
-dotTest = zeros(length(t45_q)-1,1);
-for k = 2:length(t45_q)
-    dotTest(k-1) = dot(y45_q(k,:), y45_q(k-1,:));
-end
-
-figure
-plot(t45_q(2:end),dotTest,'LineWidth',2)
-xlabel('Time (s)')
-ylabel('q_k \cdot q_{k-1}')
-title('Quaternion Ambiguity Detection (Flip if ~ -1)')
-grid on
 
 %% Rodrigues Blow-Up (Direct Integration)
 figure
