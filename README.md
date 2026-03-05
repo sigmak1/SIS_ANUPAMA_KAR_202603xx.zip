@@ -1,5 +1,13 @@
+# SIS_ANUPAMA_KAR_202603xx.zip
 
-# SIS_ANUPAMA_KAR_202603xx.zip 
+**Class:** AE 544, Analytical Dynamics  
+**Professor:** Dr. Hao Peng  
+**Semester:** Spring 2026  
+**Student Name:** Anupama Kar   
+**Assignment:** Programming Project 01   
+**School:** Embry-Riddle Aeronautical University
+
+--------------  
 Usage of AI: Used AI to understand and learn how to set everything up on GitHub, to help in markdown language,  MathJax formatting for equations, and to learn how to create .gif from MATLAB, to polish my base code, to define some of the functions, and to add some fancy items like indicator plots. Also used it to research and read about different integrators to enhance my 
 knowledge base. However, I did verify the results using other references as stated below, in the Reference section. 
 
@@ -28,13 +36,12 @@ knowledge base. However, I did verify the results using other references as stat
 ## List of Figures
 Figure 2.1: Successive yaw, pitch, and roll rotations  
 Figure 2.2: 3-2-1 Euler Angles vs Time (ode45)  
-Figure 3.1: Quaternion Components  
-Figure 3.2: Quaternion Ambiguity Detection  
-Figure 3.3: Quaternion Norm  
+Figure 3.1: Quaternion Components   
+Figure 3.2: Quaternion Norm  
 Figure 4.1: CRP Norm and Principal Rotation Angle  
 Figure 5.1: Integrator Step Size vs Time vs Pitch  
 Figure 5.2: Singularity syntax error encountered during simulation  
-Figure 6.1: 3D Animation Frame
+Figure 6.1: Aircraft Attitude (.gif)
 
 ## List of Abbreviations
 EOM: Equation of Motion  
@@ -423,12 +430,14 @@ The solver failure warning from `ode45` at **t ≈ 12.6 s** as shown in **Figure
 ## 6. 3D animation explanation  
 Once MATLAB runs successfully, it will generate a .gif file and save it in the designated folder as *Aircraft_Attitude.gif*. The legends of the .gif are same as the legends of the Euler Angles plot (figure 1.2.). Since the .gif updates itiratively, putting a legend that would stay fixed was rendering bad graphics.  
 
-![Figure 6.1: 3D Animation Frame](3D%20animation%20frame.png)
 
-**Figure 6.1:** 3D animation frame. This figure shows a sample frame from the MATLAB-generated aircraft attitude animation.
+![Figure 6.1: Aircraft Attitude](Aircraft_Attitude.gif)
 
+**Figure 6.1:** Aircraft attitude. This figure shows the aircraft attitude animation as a GIF.
 
-It is to be noted that the animation is a rendering of the computation and in no way represents the actual physical motion of an aircraft. So, singularity in Euler angles or CRPs results in tumbling or rapid spinning. Quarternion ambiguity does not show any symptoms. Only singularity affects the actual computer attitude. 
+It is to be noted that the animation is a rendering of the computation and in no way represents the actual physical motion of an aircraft. So, singularity in Euler angles or CRPs results in tumbling or rapid spinning. Quarternion ambiguity does not show any symptoms. Only singularity affects the actual computer attitude.  
+
+I was usign AI and trying to tinker around with putting models into the animation as shown in [1]. But I could only put a 2D picture so we will deal with this for now. Also, the Yaw, Pitch, and Roll vectors do not line up with the aircrafts nose, right wing, and upward as it should. 
 ## 7. References
 [1] Ross Dynamics Lab, “Euler Angle Simulation with MATLAB – Integrating the Rotational Kinematic Differential Equations,” YouTube video, 30 Jul. 2021. https://www.youtube.com/watch?v=vwn_JT0SDXQ. 
 
